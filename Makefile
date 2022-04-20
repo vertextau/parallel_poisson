@@ -6,10 +6,12 @@ TARGET = main
 BENCHMARK = main_bench
 DBG = main_dbg
 
-SRCS = function.c utils.c $(TARGET).c 
-OBJS := $(patsubst %.c,%.o,$(SRCS))
-OBJSBENCH := $(patsubst %.c,%_bench.o,$(SRCS))
-OBJSDBG := $(patsubst %.c,%_dbg.o,$(SRCS))
+SRCSDIR = src
+
+SRCS = $(SRCSDIR)/function.c $(SRCSDIR)/utils.c $(SRCSDIR)/$(TARGET).c 
+OBJS := $(patsubst $(SRCSDIR)/%.c,%.o,$(SRCS))
+OBJSBENCH := $(patsubst $(SRCSDIR)/%.c,%_bench.o,$(SRCS))
+OBJSDBG := $(patsubst $(SRCSDIR)/%.c,%_dbg.o,$(SRCS))
 
 all: $(TARGET) $(BENCHMARK) $(DBG)
 
@@ -22,13 +24,13 @@ $(BENCHMARK): $(OBJSBENCH)
 $(DBG): $(OBJSDBG)
 	$(CC) $^ -o $@ $(LDFLAGS)
 
-%.o: %.c
+%.o: $(SRCSDIR)/%.c
 	$(CC) $(CFLAGS) -c $<
 
-%_bench.o: %.c
+%_bench.o: $(SRCSDIR)/%.c
 	$(CC) -DBENCHMARK $(CFLAGS) -c $< -o $@
 
-%_dbg.o: %.c
+%_dbg.o: $(SRCSDIR)/%.c
 	$(CC) -DDEBUG $(CFLAGS) -c $< -o $@
 
 .PHONY: clean
